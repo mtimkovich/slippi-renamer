@@ -43,12 +43,52 @@ const STAGE_IDS = {
   32: 'Final Destination',
 };
 
+// Convert stageId into its name.
 function stageName(settings) {
   if (settings.stageId in STAGE_IDS) {
     return STAGE_IDS[settings.stageId];
   }
 
   return 'Illegal Stage';
+}
+
+// Return character with their tag in quotes (if they have one).
+function playerName(player) {
+  const character = CHARACTER_IDS[player.characterId];
+  if (player.nametag) {
+    return `${character} (${player.nametag})`;
+  }
+
+  return character;
+}
+
+function prettyPrint(settings) {
+  let player1;
+  let player2;
+
+  if (settings.isTeams) {
+    let teams = {};
+    for (const player of settings.players) {
+      if (!(player.teamId in teams)) {
+        teams[player.teamId] = [];
+      }
+      teams[player.teamId].push(playerName(player));
+    }
+
+    player1 = teams[0].join(' & ');
+    player2 = teams[1].join(' & ');
+  } else {
+    player1 = playerName(settings.players[0]);
+    player2 = playerName(settings.players[1]);
+  }
+
+  return `${player1} vs ${player2} - ${stageName(settings)}`;
+}
+
+function parsedFilename(settings, file) {
+  const date = file.match('_([^\.]+)')[1];
+
+  return `${date} - ${prettyPrint(settings)}.slp`
 }
 
 const DIR = '2019-05-30 MTV Melee 119/Drive #2';
@@ -62,15 +102,7 @@ fs.readdir(DIR, (err, files) => {
     const settings = game.getSettings();
 
     console.log('File: ' + filepath);
-    console.log('Stage: ' + stageName(settings));
-
-    for (const player of settings.players) {
-      if (player.nametag) {
-        console.log('Tag: ' + player.nametag);
-      }
-      console.log('Character: ' + CHARACTER_IDS[player.characterId]);
-    }
-
+    console.log(parsedFilename(settings, file));
     console.log();
   }
 });
