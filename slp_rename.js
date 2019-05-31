@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const process = require('process');
 const { default: SlippiGame } = require('slp-parser-js');
 
 const CHARACTER_IDS = {
@@ -91,18 +92,42 @@ function parsedFilename(settings, file) {
   return `${date} - ${prettyPrint(settings)}.slp`
 }
 
-const DIR = '2019-05-30 MTV Melee 119/Drive #2';
+const args = process.argv.splice(2);
 
-fs.readdir(DIR, (err, files) => {
-  for (const file of files) {
-    const filepath = path.join(DIR, file);
-    const game = new SlippiGame(filepath);
+if (!args) {
+  console.log('Usage: parse.js DIRECTORY');
+  process.exit();
+}
 
-    // Get game settings – stage, characters, etc
-    const settings = game.getSettings();
-
-    console.log('File: ' + filepath);
-    console.log(parsedFilename(settings, file));
-    console.log();
+for (const dir of args) {
+  if (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory()) {
+    console.log(`Directory '${dir}' does not exist.`);
+    continue;
   }
-});
+
+  fs.readdir(dir, (err, files) => {
+    if (err) {
+      console.log(`Error reading ${dir}: ${err}`);
+      return;
+    }
+
+    for (const file of files) {
+      if (!file.match('\.slp$')) {
+        continue;
+      }
+
+      const game = new SlippiGame(path.join(dir, file));
+
+      // Get game settings – stage, characters, etc
+      const settings = game.getSettings();
+
+      const newName = parsedFilename(settings, file);
+      console.log(`${file} -> ${newName}`);
+      fs.rename(path.join(dir, file), path.join(dir, newName), (err) => {
+        if (err) {
+          console.log(`Error renaming ${file}: ${err}`);
+        }
+      });
+    }
+  });
+}
