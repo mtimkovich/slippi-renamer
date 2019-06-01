@@ -12,7 +12,9 @@ function playerName(player) {
     return `${character} (${player.nametag})`;
   }
 
-  return character;
+  return `${character} (${slp.characters.getCharacterColorName(
+      player.characterId,
+      player.characterColor)})`;
 }
 
 function prettyPrint(settings) {
