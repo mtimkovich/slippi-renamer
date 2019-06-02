@@ -1,0 +1,23 @@
+{
+  "name": "slippi-renamer",
+  "version": "1.0.0",
+  "description": "Tag characters, tags, and stage from Slippi files",
+  "main": "slp_rename.js",
+  "dependencies": {
+    "slp-parser-js": "^2.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mtimkovich/slippi-renamer.git"
+  },
+  "author": "Smooglers",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mtimkovich/slippi-renamer/issues"
+  },
+  "homepage": "https://github.com/mtimkovich/slippi-renamer#readme"
+}

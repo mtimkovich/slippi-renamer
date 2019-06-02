@@ -48,46 +48,35 @@ function parsedFilename(settings, file) {
   return `${dateRegex[1]} - ${prettyPrint(settings)}.slp`
 }
 
-const args = process.argv.splice(2);
+const files = process.argv.splice(2);
 
-if (!args) {
+if (!files) {
   console.log('Usage: parse.js DIRECTORY');
   process.exit();
 }
 
-for (const dir of args) {
-  if (!fs.existsSync(dir) || !fs.lstatSync(dir).isDirectory()) {
-    console.log(`Directory '${dir}' does not exist.`);
+for (const filePath of files) {
+  const dir = path.dirname(filePath);
+  const file = path.basename(filePath);
+
+  if (!file.match('\.slp$')) {
+    console.log(`'${file}' skipped.`);
     continue;
   }
 
-  fs.readdir(dir, (err, files) => {
+  const game = new SlippiGame(filePath);
+  const settings = game.getSettings();
+
+  const newName = parsedFilename(settings, file);
+  const newPath = path.join(dir, newName);
+  if (!newName) {
+    console.log(`Invalid input filename '${file}'`);
+    continue;
+  }
+  console.log(`${filePath} -> ${newPath}`);
+  fs.rename(filePath, newPath, (err) => {
     if (err) {
-      console.log(`Error reading ${dir}: ${err}`);
-      return;
-    }
-
-    for (const file of files) {
-      if (!file.match('\.slp$')) {
-        continue;
-      }
-
-      const game = new SlippiGame(path.join(dir, file));
-
-      // Get game settings – stage, characters, etc
-      const settings = game.getSettings();
-
-      const newName = parsedFilename(settings, file);
-      if (!newName) {
-        console.log(`Invalid input filename '${file}'`);
-        continue;
-      }
-      console.log(`${file} -> ${newName}`);
-      fs.rename(path.join(dir, file), path.join(dir, newName), (err) => {
-        if (err) {
-          console.log(`Error renaming ${file}: ${err}`);
-        }
-      });
+      console.log(`Error renaming ${filePath}: ${err}`);
     }
   });
 }

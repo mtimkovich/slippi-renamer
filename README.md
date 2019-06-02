@@ -1,7 +1,6 @@
 # Slippi Renamer
 
-Rename Slippi (.slp) files based on their metadata. Renames game files to
-include characters, tags, and stage.
+Rename Slippi (.slp) game files to include characters, tags, and stage.
 
 ## Installation
 
@@ -11,7 +10,7 @@ npm install
 
 ## Usage
 
-Given directories as command-line arguments, it will rename all `*.slp` files from:
+Given `*.slp` files as input, it will rename the files from:
 
 **Singles:**
 ```
