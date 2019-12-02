@@ -1,6 +1,6 @@
 # Slippi Renamer
 
-Rename Slippi (.slp) game files to include characters, tags, and stage.
+Rename Slippi (.slp) game files to include characters, tags, colors, and stage.
 
 ## Installation
 
@@ -21,3 +21,11 @@ Game_20190530T222709.slp -> 20190530T222709 - Marth (BRY) vs Fox - Battlefield.s
 ```
 Game_20190521T212659.slp -> 20190521T212659 - Falco & Marth vs Fox (DJ) & Fox (SWRV) - Yoshi's Story.slp
 ```
+
+## Changelog
+
+### 1.1.0
+- Show character colors for players without tags.
+- Don't rename files that we have trouble parsing.
+- Better command line parsing
+  - `-n` flag to run the script without performing any renaming.
