@@ -1,15 +1,25 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const process = require('process');
 const slp = require('slp-parser-js');
 const { default: SlippiGame } = require('slp-parser-js');
+const argv = require('yargs')
+      .usage('Usage $0 [options] <files>')
+      .demandCommand(1, 'You must provide files to rename.')
+      .boolean('n')
+      .describe('n', 'perform a trial run without renaming')
+      .help('h')
+      .argv
 
-// Return character with their tag in quotes (if they have one).
+/** Returns character with their tag or color in parentheses (if they have either). */
 function playerName(player) {
-  const character = slp.characters.getCharacterInfo(player.characterId).name;
+  const character = slp.characters.getCharacterName(player.characterId);
+  const color = slp.characters.getCharacterColorName(player.characterId, player.characterColor);
+
   if (player.nametag) {
     return `${character} (${player.nametag})`;
+  } else if (color !== 'Default') {
+    return `${character} (${color})`;
   }
 
   return character;
@@ -26,6 +36,11 @@ function prettyPrint(settings) {
         teams[player.teamId] = [];
       }
       teams[player.teamId].push(playerName(player));
+    }
+
+    // Something's wrong with this teams game.
+    if (teams.length !== 2) {
+      return null;
     }
 
     player1 = teams[0].join(' & ');
@@ -45,15 +60,15 @@ function parsedFilename(settings, file) {
     return null;
   }
 
-  return `${dateRegex[1]} - ${prettyPrint(settings)}.slp`
+  const pretty = prettyPrint(settings);
+  if (!pretty) {
+    return null;
+  }
+
+  return `${dateRegex[1]} - ${pretty}.slp`
 }
 
-const files = process.argv.splice(2);
-
-if (!files) {
-  console.log('Usage: parse.js DIRECTORY');
-  process.exit();
-}
+const files = argv._;
 
 for (const filePath of files) {
   const dir = path.dirname(filePath);
@@ -68,15 +83,19 @@ for (const filePath of files) {
   const settings = game.getSettings();
 
   const newName = parsedFilename(settings, file);
-  const newPath = path.join(dir, newName);
   if (!newName) {
-    console.log(`Invalid input filename '${file}'`);
+    console.log(`Error parsing '${file}'`);
     continue;
   }
+
+  const newPath = path.join(dir, newName);
   console.log(`${filePath} -> ${newPath}`);
-  fs.rename(filePath, newPath, (err) => {
-    if (err) {
-      console.log(`Error renaming ${filePath}: ${err}`);
-    }
-  });
+
+  if (!argv.n) {
+    fs.rename(filePath, newPath, err => {
+      if (err) {
+        console.log(`Error renaming ${filePath}: ${err}`);
+      }
+    });
+  }
 }

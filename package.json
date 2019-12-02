@@ -4,7 +4,8 @@
   "description": "Tag characters, tags, and stage from Slippi files",
   "main": "slp_rename.js",
   "dependencies": {
-    "slp-parser-js": "^2.5.0"
+    "slp-parser-js": "^4.1.0",
+    "yargs": "^15.0.2"
   },
   "devDependencies": {},
   "scripts": {
