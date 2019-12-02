@@ -29,3 +29,7 @@ Game_20190521T212659.slp -> 20190521T212659 - Falco & Marth vs Fox (DJ) & Fox (S
 - Don't rename files that we have trouble parsing.
 - Better command line parsing
   - `-n` flag to run the script without performing any renaming.
+
+## Authors
+
+Max Timkovich (DJSwerve)
