@@ -4,8 +4,8 @@ const path = require('path');
 const slp = require('slp-parser-js');
 const { default: SlippiGame } = require('slp-parser-js');
 const argv = require('yargs')
-      .usage('Usage $0 [options] <files>')
-      .demandCommand(1, 'You must provide files to rename.')
+      .usage('Usage $0 [options] <directories>')
+      .demandCommand(1, 'You must provide directories to rename.')
       .boolean('n')
       .describe('n', 'perform a trial run without renaming')
       .help('h')
@@ -68,34 +68,41 @@ function parsedFilename(settings, file) {
   return `${dateRegex[1]} - ${pretty}.slp`
 }
 
-const files = argv._;
+const directories = argv._;
 
-for (const filePath of files) {
-  const dir = path.dirname(filePath);
-  const file = path.basename(filePath);
-
-  if (!file.match('\.slp$')) {
-    console.log(`'${file}' skipped.`);
+for (const dir of directories) {
+  const stats = fs.lstatSync(dir);
+  if (!stats.isDirectory()) {
+    console.log(`${dir} is not a directory, skipping.`);
     continue;
   }
 
-  const game = new SlippiGame(filePath);
-  const settings = game.getSettings();
+  for (const file of fs.readdirSync(dir)) {
+    const filePath = path.join(dir, file);
 
-  const newName = parsedFilename(settings, file);
-  if (!newName) {
-    console.log(`Error parsing '${file}'`);
-    continue;
-  }
+    if (!file.match('\.slp$')) {
+      console.log(`'${file}' skipped.`);
+      continue;
+    }
 
-  const newPath = path.join(dir, newName);
-  console.log(`${filePath} -> ${newPath}`);
+    const game = new SlippiGame(filePath);
+    const settings = game.getSettings();
 
-  if (!argv.n) {
-    fs.rename(filePath, newPath, err => {
-      if (err) {
-        console.log(`Error renaming ${filePath}: ${err}`);
-      }
-    });
+    const newName = parsedFilename(settings, file);
+    if (!newName) {
+      console.log(`Error parsing '${file}'`);
+      continue;
+    }
+
+    const newPath = path.join(dir, newName);
+    console.log(`${filePath} -> ${newPath}`);
+
+    if (!argv.n) {
+      fs.rename(filePath, newPath, err => {
+        if (err) {
+          console.log(`Error renaming ${filePath}: ${err}`);
+        }
+      });
+    }
   }
 }
