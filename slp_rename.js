@@ -73,38 +73,46 @@ function parsedFilename(settings, file) {
 const directories = argv._;
 
 for (const dir of directories) {
-  const stats = fs.lstatSync(dir);
-  if (!stats.isDirectory()) {
-    console.log(`${dir} is not a directory, skipping.`);
-    continue;
-  }
-
-  for (const file of fs.readdirSync(dir)) {
-    const filePath = path.join(dir, file);
-
-    if (!file.match('\.slp$')) {
-      console.log(`'${file}' skipped.`);
-      continue;
+  const stats = fs.lstat(dir, (err, stats) => {
+    if (err || !stats.isDirectory()) {
+      console.log(`${dir} is not a directory, skipping.`);
+      return;
     }
 
-    const game = new SlippiGame(filePath);
-    const settings = game.getSettings();
+    fs.readdir(dir, (err, files) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
 
-    const newName = parsedFilename(settings, file);
-    if (!newName) {
-      console.log(`Error parsing '${file}'`);
-      continue;
-    }
+      for (const file of files) {
+        const filePath = path.join(dir, file);
 
-    const newPath = path.join(dir, newName);
-    console.log(`${filePath} -> ${newPath}`);
-
-    if (!argv.n) {
-      fs.rename(filePath, newPath, err => {
-        if (err) {
-          console.log(`Error renaming ${filePath}: ${err}`);
+        if (!file.match('\.slp$')) {
+          console.log(`'${file}' skipped.`);
+          continue;
         }
-      });
-    }
-  }
+
+        const game = new SlippiGame(filePath);
+        const settings = game.getSettings();
+
+        const newName = parsedFilename(settings, file);
+        if (!newName) {
+          console.log(`Error parsing '${file}'`);
+          continue;
+        }
+
+        const newPath = path.join(dir, newName);
+        console.log(`${filePath} -> ${newPath}`);
+
+        if (!argv.n) {
+          fs.rename(filePath, newPath, err => {
+            if (err) {
+              console.log(`Error renaming ${filePath}: ${err}`);
+            }
+          });
+        }
+      }
+    })
+  });
 }
