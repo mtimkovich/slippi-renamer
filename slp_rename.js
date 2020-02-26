@@ -25,32 +25,28 @@ function playerName(player) {
   return character;
 }
 
-function prettyPrint(settings) {
-  let player1;
-  let player2;
-
-  if (settings.isTeams) {
-    let teams = {};
-    for (const player of settings.players) {
-      if (!(player.teamId in teams)) {
-        teams[player.teamId] = [];
-      }
-      teams[player.teamId].push(playerName(player));
+function prettyPrintTeams(settings) {
+  const stage = slp.stages.getStageName(settings.stageId);
+  const teams = new Map();
+  for (const player of settings.players) {
+    if (!teams.has(player.teamId)) {
+      teams.set(player.teamId, []);
     }
-
-    // Something's wrong with this teams game.
-    if (teams.length !== 2) {
-      return null;
-    }
-
-    player1 = teams[0].join(' & ');
-    player2 = teams[1].join(' & ');
-  } else {
-    player1 = playerName(settings.players[0]);
-    player2 = playerName(settings.players[1]);
+    teams.get(player.teamId).push(playerName(player));
   }
 
-  return `${player1} vs ${player2} - ${slp.stages.getStageName(settings.stageId)}`;
+  const pretty = Array.from(teams.values())
+                      .map(team => team.join(' & '))
+                      .join(' vs ');
+  return `${pretty} - ${stage}`;
+}
+
+function prettyPrintSingles(settings) {
+  const player1 = playerName(settings.players[0]);
+  const player2 = playerName(settings.players[1]);
+  const stage = slp.stages.getStageName(settings.stageId);
+
+  return `${player1} vs ${player2} - ${stage}`;
 }
 
 function parsedFilename(settings, file) {
@@ -60,7 +56,13 @@ function parsedFilename(settings, file) {
     return null;
   }
 
-  const pretty = prettyPrint(settings);
+  let pretty = null;
+
+  if (settings.isTeams) {
+    pretty = prettyPrintTeams(settings);
+  } else {
+    pretty = prettyPrintSingles(settings);
+  }
   if (!pretty) {
     return null;
   }

@@ -24,6 +24,9 @@ Game_20190521T212659.slp -> 20190521T212659 - Falco & Marth vs Fox (DJ) & Fox (S
 
 ## Changelog
 
+### 1.2.0
+- Handle non-standard teams.
+
 ### 1.1.1
 - Takes directories as arguments instead of files to better work on Windows.
 
