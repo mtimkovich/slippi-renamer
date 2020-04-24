@@ -2,32 +2,41 @@
 
 Rename Slippi (.slp) game files to include characters, tags, colors, and stage.
 
-Given a folder of `*.slp` files as input, it will rename the files from:
-
 **Singles:**
 ```
-Game_20190530T222709.slp -> 20190530T222709 - Marth (BRY) vs Fox - Battlefield.slp
+Game_20190530T222709.slp -> 20190530T222709 - Marth (BRY) vs Fox (Default) - Battlefield.slp
 ```
 
 **Doubles:**
 ```
-Game_20190521T212659.slp -> 20190521T212659 - Falco & Marth vs Fox (DJ) & Fox (SWRV) - Yoshi's Story.slp
+Game_20190521T212659.slp -> 20190521T212659 - Falco (Red) & Marth (Default) vs Fox (DJ) & Fox (SWRV) - Yoshi's Story.slp
 ```
 
-## Installation
+## Setup
 
-```
-npm install
-```
+1. Install [Node.js][node].
+2. Download [slippi-renamer][download].
+3. Navigate to where slippi-renamer is downloaded in the terminal or Node.js console to using `cd`.
+4. Run `npm install`.
 
 ## Usage
 
-`FOLDER` is a directory full of `*.slp` files.
+`FOLDER` is the path to a directory with `*.slp` files. 
 
 ```
-node slp_rename.js FOLDER
+node slp_rename.js "FOLDER"
 ```
 
+```
+Usage slp_rename.js [options] <directories>
+
+Options:
+  --version  Show version number                                       [boolean]
+  -n         perform a trial run without renaming                      [boolean]
+  -h         Show help                                                 [boolean]
+
+You must provide directories to rename.
+```
 
 ## Changelog
 
@@ -47,3 +56,6 @@ node slp_rename.js FOLDER
 ## Authors
 
 Max "DJSwerve" Timkovich
+
+[node]: https://nodejs.org/en/download/
+[download]: https://github.com/mtimkovich/slippi-renamer/archive/master.zip
