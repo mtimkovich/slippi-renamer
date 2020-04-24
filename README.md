@@ -2,14 +2,6 @@
 
 Rename Slippi (.slp) game files to include characters, tags, colors, and stage.
 
-## Installation
-
-```
-npm install
-```
-
-## Usage
-
 Given a folder of `*.slp` files as input, it will rename the files from:
 
 **Singles:**
@@ -21,6 +13,21 @@ Game_20190530T222709.slp -> 20190530T222709 - Marth (BRY) vs Fox - Battlefield.s
 ```
 Game_20190521T212659.slp -> 20190521T212659 - Falco & Marth vs Fox (DJ) & Fox (SWRV) - Yoshi's Story.slp
 ```
+
+## Installation
+
+```
+npm install
+```
+
+## Usage
+
+FOLDER is a directory full of `*.slp` files.
+
+```
+node slp_rename.js FOLDER
+```
+
 
 ## Changelog
 
