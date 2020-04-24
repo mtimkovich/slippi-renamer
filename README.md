@@ -22,7 +22,7 @@ npm install
 
 ## Usage
 
-FOLDER is a directory full of `*.slp` files.
+`FOLDER` is a directory full of `*.slp` files.
 
 ```
 node slp_rename.js FOLDER
