@@ -22,7 +22,7 @@ function playerName(player, metadata) {
   } else if (color !== 'Default') {
     playerIds.push(color);
   }
-  if (metadata && metadata.names.netplay !== 'Player') {
+  if (metadata && metadata.names.netplay !== 'Player' && metadata.names.netplay !== undefined) {
     playerIds.push(metadata.names.netplay);
   }
 
@@ -41,7 +41,11 @@ function prettyPrintTeams(settings, metadata) {
     if (!teams.has(player.teamId)) {
       teams.set(player.teamId, []);
     }
-    teams.get(player.teamId).push(playerName(player, metadata.players[i]));
+    if (metadata) {
+      teams.get(player.teamId).push(playerName(player, metadata.players[i]));
+    } else {
+      teams.get(player.teamId).push(playerName(player));
+    }
   }
 
   const pretty = Array.from(teams.values())
@@ -51,8 +55,15 @@ function prettyPrintTeams(settings, metadata) {
 }
 
 function prettyPrintSingles(settings, metadata) {
-  const player1 = playerName(settings.players[0], metadata.players[0]);
-  const player2 = playerName(settings.players[1], metadata.players[1]);
+  // kind of annoying that some games don't have metadata
+  var player1, player2;
+  if (metadata) {
+    player1 = playerName(settings.players[0], metadata.players[0]);
+    player2 = playerName(settings.players[1], metadata.players[1]);
+  } else {
+    player1 = playerName(settings.players[0]);
+    player2 = playerName(settings.players[1]);
+  }
   const stage = slp.stages.getStageName(settings.stageId);
 
   return `${player1} vs ${player2} - ${stage}`;
