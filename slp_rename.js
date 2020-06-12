@@ -12,27 +12,36 @@ const argv = require('yargs')
       .argv
 
 /** Returns character with their tag or color in parentheses (if they have either). */
-function playerName(player) {
+function playerName(player, metadata) {
   const character = slp.characters.getCharacterName(player.characterId);
   const color = slp.characters.getCharacterColorName(player.characterId, player.characterColor);
+  let playerIds = [];
 
   if (player.nametag) {
-    return `${character} (${player.nametag})`;
+    playerIds.push(player.nametag);
   } else if (color !== 'Default') {
-    return `${character} (${color})`;
+    playerIds.push(color);
+  }
+  if (metadata && metadata.names.netplay !== 'Player') {
+    playerIds.push(metadata.names.netplay);
   }
 
-  return character;
+  if (playerIds.length > 0) {
+    return `${character} (${playerIds.join('/')})`;
+  } else {
+    return character;
+  }
 }
 
-function prettyPrintTeams(settings) {
+function prettyPrintTeams(settings, metadata) {
   const stage = slp.stages.getStageName(settings.stageId);
   const teams = new Map();
-  for (const player of settings.players) {
+  for (let i = 0; i < settings.players.length; i++) {
+    let player = settings.players[i];
     if (!teams.has(player.teamId)) {
       teams.set(player.teamId, []);
     }
-    teams.get(player.teamId).push(playerName(player));
+    teams.get(player.teamId).push(playerName(player, metadata.players[i]));
   }
 
   const pretty = Array.from(teams.values())
@@ -41,15 +50,15 @@ function prettyPrintTeams(settings) {
   return `${pretty} - ${stage}`;
 }
 
-function prettyPrintSingles(settings) {
-  const player1 = playerName(settings.players[0]);
-  const player2 = playerName(settings.players[1]);
+function prettyPrintSingles(settings, metadata) {
+  const player1 = playerName(settings.players[0], metadata.players[0]);
+  const player2 = playerName(settings.players[1], metadata.players[1]);
   const stage = slp.stages.getStageName(settings.stageId);
 
   return `${player1} vs ${player2} - ${stage}`;
 }
 
-function parsedFilename(settings, file) {
+function parsedFilename(settings, metadata, file) {
   const dateRegex = file.match('_([^\.]+)');
 
   if (!dateRegex) {
@@ -59,9 +68,9 @@ function parsedFilename(settings, file) {
   let pretty = null;
 
   if (settings.isTeams) {
-    pretty = prettyPrintTeams(settings);
+    pretty = prettyPrintTeams(settings, metadata);
   } else {
-    pretty = prettyPrintSingles(settings);
+    pretty = prettyPrintSingles(settings, metadata);
   }
   if (!pretty) {
     return null;
@@ -95,8 +104,9 @@ for (const dir of directories) {
 
         const game = new SlippiGame(filePath);
         const settings = game.getSettings();
+        const metadata = game.getMetadata();
 
-        const newName = parsedFilename(settings, file);
+        const newName = parsedFilename(settings, metadata, file);
         if (!newName) {
           console.log(`Error parsing '${file}'`);
           continue;
