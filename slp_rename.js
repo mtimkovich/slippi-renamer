@@ -56,7 +56,7 @@ function prettyPrintTeams(settings, metadata) {
 
 function prettyPrintSingles(settings, metadata) {
   // kind of annoying that some games don't have metadata
-  var player1, player2;
+  let player1, player2;
   if (metadata) {
     player1 = playerName(settings.players[0], metadata.players[0]);
     player2 = playerName(settings.players[1], metadata.players[1]);
