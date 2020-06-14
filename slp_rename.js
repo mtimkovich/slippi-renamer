@@ -27,7 +27,7 @@ function playerName(player, metadata) {
   }
 
   if (playerIds.length > 0) {
-    return `${character} (${playerIds.join('/')})`;
+    return `${character} (${playerIds.join(',')})`;
   } else {
     return character;
   }
@@ -124,12 +124,12 @@ for (const dir of directories) {
         }
 
         const newPath = path.join(dir, newName);
-        console.log(`${filePath} -> ${newPath}`);
-
         if (!argv.n) {
           fs.rename(filePath, newPath, err => {
             if (err) {
               console.log(`Error renaming ${filePath}: ${err}`);
+            } else {
+              console.log(`Renamed: ${filePath} -> ${newPath}`);
             }
           });
         }
