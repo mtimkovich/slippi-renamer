@@ -132,6 +132,8 @@ for (const dir of directories) {
               console.log(`Renamed: ${filePath} -> ${newPath}`);
             }
           });
+        } else {
+          console.log(`${filePath} -> ${newPath}`);
         }
       }
     })
