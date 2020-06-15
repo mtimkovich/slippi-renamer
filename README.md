@@ -59,7 +59,7 @@ You must provide directories to rename.
 ## Authors
 
 * Max "DJSwerve" Timkovich
-* **IvantheTricourne** - additional bug fixes and enhancements.
+* IvantheTricourne - additional bug fixes and enhancements.
 
 [node]: https://nodejs.org/en/download/
 [download]: https://github.com/mtimkovich/slippi-renamer/archive/master.zip
