@@ -58,7 +58,7 @@ You must provide directories to rename.
 
 ## Authors
 
-Max "DJSwerve" Timkovich
+* Max "DJSwerve" Timkovich
 * **IvantheTricourne** - additional bug fixes and enhancements.
 
 [node]: https://nodejs.org/en/download/
