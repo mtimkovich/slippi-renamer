@@ -40,6 +40,9 @@ You must provide directories to rename.
 
 ## Changelog
 
+### 1.2.1
+- Show netplay name, if applicable.
+
 ### 1.2.0
 - Handle non-standard teams.
 - Better error handling.
@@ -56,6 +59,7 @@ You must provide directories to rename.
 ## Authors
 
 Max "DJSwerve" Timkovich
+* **IvantheTricourne** - additional bug fixes and enhancements.
 
 [node]: https://nodejs.org/en/download/
 [download]: https://github.com/mtimkovich/slippi-renamer/archive/master.zip
