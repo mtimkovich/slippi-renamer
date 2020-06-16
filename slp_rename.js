@@ -72,8 +72,15 @@ function prettyPrintSingles(settings, metadata) {
 function parsedFilename(settings, metadata, file) {
   const dateRegex = file.match('_([^\.]+)');
 
+  let datePrefix = null;
   if (!dateRegex) {
-    return null;
+    if (!metadata) {
+      return null;
+    }
+    let dateStr = metadata.startAt.split('-').join('').split(':').join('');
+    datePrefix = dateStr.substring(0, dateStr.length - 1);
+  } else {
+    datePrefix = dateRegex[1];
   }
 
   let pretty = null;
@@ -87,7 +94,7 @@ function parsedFilename(settings, metadata, file) {
     return null;
   }
 
-  return `${dateRegex[1]} - ${pretty}.slp`
+  return `${datePrefix} - ${pretty}.slp`
 }
 
 const directories = argv._;
@@ -129,11 +136,11 @@ for (const dir of directories) {
             if (err) {
               console.log(`Error renaming ${filePath}: ${err}`);
             } else {
-              console.log(`Renamed: ${filePath} -> ${newPath}`);
+              console.log(`Renamed: ${file} -> ${newName}`);
             }
           });
         } else {
-          console.log(`${filePath} -> ${newPath}`);
+          console.log(`${file} -> ${newName}`);
         }
       }
     })
