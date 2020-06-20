@@ -77,7 +77,7 @@ function parsedFilename(settings, metadata, file) {
     if (!metadata) {
       return null;
     }
-    let dateStr = metadata.startAt.split('-').join('').split(':').join('');
+    const dateStr = metadata.startAt.replace(/[-:]/g, '');
     datePrefix = dateStr.substring(0, dateStr.length - 1);
   } else {
     datePrefix = dateRegex[1];
