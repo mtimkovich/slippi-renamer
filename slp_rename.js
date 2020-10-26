@@ -8,6 +8,8 @@ const argv = require('yargs')
       .demandCommand(1, 'You must provide directories to rename.')
       .boolean('n')
       .describe('n', 'perform a trial run without renaming')
+      .boolean('r')
+      .describe('r', 'rename in subdirectories too')
       .help('h')
       .argv
 
@@ -97,9 +99,11 @@ function parsedFilename(settings, metadata, file) {
   return `${datePrefix} - ${pretty}.slp`
 }
 
-const directories = argv._;
+let directories = argv._;
 
-for (const dir of directories) {
+while (directories.length > 0) {
+  const dir = directories.pop();
+
   const stats = fs.lstat(dir, (err, stats) => {
     if (err || !stats.isDirectory()) {
       console.log(`${dir} is not a directory, skipping.`);
@@ -113,12 +117,15 @@ for (const dir of directories) {
       }
 
       for (const file of files) {
+        // TODO: Check if file is actually directory.
         const filePath = path.join(dir, file);
 
         if (!file.match('\.slp$')) {
           console.log(`'${file}' skipped.`);
           continue;
         }
+
+        continue;
 
         const game = new SlippiGame(filePath);
         const settings = game.getSettings();
