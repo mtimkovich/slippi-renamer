@@ -99,57 +99,55 @@ function parsedFilename(settings, metadata, file) {
   return `${datePrefix} - ${pretty}.slp`
 }
 
-let directories = argv._;
+function isDirectory(dir) {
+  const stats = fs.lstatSync(dir);
+  return stats && stats.isDirectory();
+}
+
+const directories = argv._;
 
 while (directories.length > 0) {
   const dir = directories.pop();
 
-  const stats = fs.lstat(dir, (err, stats) => {
-    if (err || !stats.isDirectory()) {
-      console.log(`${dir} is not a directory, skipping.`);
-      return;
+  if (!isDirectory(dir)) {
+    console.log(`${dir} is not a directory, skipping.`);
+    continue;
+  }
+
+  console.log(`Searching ${dir} for slp files.`);
+
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const filePath = path.join(dir, file);
+    if (argv.r && isDirectory(filePath)) {
+      directories.push(filePath);
+      continue;
+    } else if (!file.match('\.slp$')) {
+      console.log(`'${file}' skipped.`);
+      continue;
     }
 
-    fs.readdir(dir, (err, files) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
+    const game = new SlippiGame(filePath);
+    const settings = game.getSettings();
+    const metadata = game.getMetadata();
 
-      for (const file of files) {
-        // TODO: Check if file is actually directory.
-        const filePath = path.join(dir, file);
+    const newName = parsedFilename(settings, metadata, file);
+    if (!newName) {
+      console.log(`Error parsing '${file}'`);
+      continue;
+    }
 
-        if (!file.match('\.slp$')) {
-          console.log(`'${file}' skipped.`);
-          continue;
-        }
-
-        continue;
-
-        const game = new SlippiGame(filePath);
-        const settings = game.getSettings();
-        const metadata = game.getMetadata();
-
-        const newName = parsedFilename(settings, metadata, file);
-        if (!newName) {
-          console.log(`Error parsing '${file}'`);
-          continue;
-        }
-
-        const newPath = path.join(dir, newName);
-        if (!argv.n) {
-          fs.rename(filePath, newPath, err => {
-            if (err) {
-              console.log(`Error renaming ${filePath}: ${err}`);
-            } else {
-              console.log(`Renamed: ${file} -> ${newName}`);
-            }
-          });
+    const newPath = path.join(dir, newName);
+    if (!argv.n) {
+      fs.rename(filePath, newPath, err => {
+        if (err) {
+          console.log(`Error renaming ${filePath}: ${err}`);
         } else {
-          console.log(`${file} -> ${newName}`);
+          console.log(`Renamed: ${file} -> ${newName}`);
         }
-      }
-    })
-  });
+      });
+    } else {
+      console.log(`${file} -> ${newName}`);
+    }
+  }
 }
