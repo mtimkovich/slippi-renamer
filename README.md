@@ -40,6 +40,9 @@ You must provide directories to rename.
 
 ## Changelog
 
+### 1.2.2
+- Added `-r` flag to rename folders recursively.
+
 ### 1.2.1
 - Show netplay name, if applicable.
 
