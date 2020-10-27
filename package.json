@@ -1,6 +1,6 @@
 {
   "name": "slippi-renamer",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "Tag characters, tags, and stage from Slippi files",
   "main": "slp_rename.js",
   "dependencies": {

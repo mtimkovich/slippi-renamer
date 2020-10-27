@@ -33,6 +33,7 @@ Usage slp_rename.js [options] <directories>
 Options:
   --version  Show version number                                       [boolean]
   -n         perform a trial run without renaming                      [boolean]
+  -r         rename in subdirectories too                              [boolean]
   -h         Show help                                                 [boolean]
 
 You must provide directories to rename.
